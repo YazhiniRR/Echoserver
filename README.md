@@ -1,4 +1,4 @@
-## Date: 03-03-2025
+## Date: 14-08-2025
 # Echoserver
 Echo server and client using python socket
 
@@ -24,39 +24,45 @@ Testing the server and client
 Server.py
 ```
 import socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind(('localhost', 12345))
+server_socket.listen(1)
 
-HOST, PORT = '127.0.0.1', 65432
+print("Server is listening on port 12345...")
+conn, addr = server_socket.accept()
+print(f"Connected by {addr}")
 
-with socket.create_server((HOST, PORT)) as server:
-    conn, addr = server.accept()  
-    print(f"Connected by {addr}")
+while True:
+    data = conn.recv(1024)
+    if not data:  # If no data, client closed connection
+        break
+    print(f"Received from client: {data.decode()}")
+    conn.sendall(data)  # Echo back the same data
 
-    data = conn.recv(1024)  # Receive data
-    print(f"Received: {data.decode()}")
-
-    conn.sendall(b'My name is Yash')  
+conn.close()
 
 ```
 Client.py
 ```
 import socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect(('localhost', 12345))
 
-HOST, PORT = '127.0.0.1', 65432
+while True:
+    msg = input("Enter message (type 'exit' to quit): ")
+    if msg.lower() == 'exit':
+        break
+    client_socket.sendall(msg.encode())
+    data = client_socket.recv(1024)
+    print(f"Echo from server: {data.decode()}")
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-    client.connect((HOST, PORT)) 
-    client.sendall(b'YAZHINI R R ,212224100063')  
-
-    response = client.recv(1024)  
-    print(f"Server says: {response.decode()}")
-
+client_socket.close()
 ```
 
 ## OUTPUT:
-![client](https://github.com/user-attachments/assets/02e2ea8a-fc90-4511-b41e-31aaff81b8cf)
 
-![server](https://github.com/user-attachments/assets/790798e9-b019-4bc7-96ab-e12a97a691cb)
-
+<img width="857" height="224" alt="Screenshot 2025-08-14 090737" src="https://github.com/user-attachments/assets/184d1474-5554-499a-9494-0a376238018c" />
+<img width="863" height="403" alt="Screenshot 2025-08-14 090533" src="https://github.com/user-attachments/assets/c9b26133-3433-4b7c-a8f7-d4ef6fa0cd38" />
 
 ## RESULT:
 The program is executed successfully
